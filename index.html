@@ -50,6 +50,7 @@
       <textarea id="inputForComment" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
       <div class="add-form-row">
+        <button class="add-form-button" id="buttonForDeleteComment">Удалить</button>
         <button class="add-form-button" id="buttonForWriteComment">Написать</button>
       </div>
     </div>
@@ -59,6 +60,48 @@
 <script>
   "use strict";
   // Код писать здесь
+
+  //Инициализация переменных
+
+  let countOfLikes = 0; //счетчик лайков
+
+  const commentButton = document.getElementById('buttonForWriteComment');   //кнопка для отправки коммента
+  const deleteButton = document.getElementById('buttonForDeleteComment');   //кнопка для удаления коммента
+  const elComments = document.getElementById('blockOfComments');          //страница с комментами
+  const userNameInput = document.getElementById('inputForName');          //поле ввода имени
+  const userCommentInput = document.getElementById('inputForComment');    //поле ввода коммента
+
+  commentButton.disabled = true;
+  commentButton.classList.add('add-form-button_disable')
+  //Расширенная валидация
+
+  function letDisabledButton(expectedValue) {
+    if (expectedValue === '') {
+      commentButton.disabled = true;
+      commentButton.classList.add('add-form-button_disable')
+    } else {
+      commentButton.disabled = false;
+      commentButton.classList.remove('add-form-button_disable')
+    }
+  };
+
+  function letClearForm(form) {
+    form.classList.remove('error');
+  };
+
+
+  userNameInput.addEventListener('input', () => {
+    letDisabledButton(userNameInput.value)
+  });
+  userCommentInput.addEventListener('input', () => {
+    letDisabledButton(userCommentInput.value);
+  });
+  userNameInput.addEventListener('click', () => {
+    letClearForm(userNameInput);
+  });
+  userCommentInput.addEventListener('click', () => {
+    letClearForm(userCommentInput);
+  });
 
   //Функция для форматирования даты под коммент
   const formatDate = (dateObject) => {
@@ -75,15 +118,11 @@
     return outDate;
   }
 
-  let countOfLikes = 0; //счетчик лайков
-
-  const commentButton = document.getElementById('buttonForWriteComment');   //кнопка для отправки коммента
-  const elComments = document.getElementById('blockOfComments');          //страница с комментами
-  const userNameInput = document.getElementById('inputForName');          //поле ввода имени
-  const userCommentInput = document.getElementById('inputForComment');    //поле ввода коммента
-
   //обработчик нажатия на кнопку отправки коммента
-  commentButton.addEventListener('click', () => {
+
+  //Функция вызываемая в обработчике:
+
+  const sendComment = () => {
     userNameInput.classList.remove('error');
     userCommentInput.classList.remove('error');
 
@@ -92,12 +131,12 @@
     //валидация что поля не пустые
     if (userNameInput.value === "") {
       userNameInput.classList.add('error');
-      if (userCommentInput.value === "") {
+      if (userCommentInput.value === "" || userCommentInput.value === "\n") {
         userCommentInput.classList.add('error');
       }
       return;
     }
-    if (userCommentInput.value === "") {
+    if (userCommentInput.value === "" || userCommentInput.value === "\n") {
       userCommentInput.classList.add('error');
       return;
     }
@@ -124,9 +163,29 @@
     //очищаем поля
     userNameInput.value = "";
     userCommentInput.value = "";
-  });
-  
+  };
+
+  //обработчик по кнопке отправки коммента:
+  commentButton.addEventListener('click', sendComment);
+  //обработчик по клавише enter:
+  document.addEventListener('keyup', (e) => {
+    if (e.code === 'Enter') {
+      sendComment();
+    }
+  })
+
+  //обработчик удаления комментария:
+  deleteButton.addEventListener('click', () => {
+    const usArray = elComments.innerHTML.split('');
+    const lengthOfArray = usArray.length;
+    for (let i = 0; i < lengthOfArray - elComments.innerHTML.lastIndexOf('<li class="comment">'); i++) {
+      usArray.pop();
+    };
+    elComments.innerHTML = usArray.join('');
+  })
+
   console.log("It works!");
+
 </script>
 
 </html>
