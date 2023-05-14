@@ -10,40 +10,7 @@
 <body>
   <div class="container">
     <ul class="comments" id="blockOfComments">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>
+      <!-- Список рендерится в JS -->
     </ul>
     <div class="add-form">
       <input id="inputForName" type="text" class="add-form-name" placeholder="Введите ваше имя" />
@@ -71,8 +38,82 @@
   const userNameInput = document.getElementById('inputForName');          //поле ввода имени
   const userCommentInput = document.getElementById('inputForComment');    //поле ввода коммента
 
-  commentButton.disabled = true;
-  commentButton.classList.add('add-form-button_disable')
+  commentButton.disabled = true;                                          //Отключили кнопку отправки комментария
+  commentButton.classList.add('add-form-button_disable');
+
+
+  //Обьявляем массив, содержащий объекты - ключи комментария
+
+  const arrOfComments = [
+    {
+      name: 'Глеб Фокин',
+      date: '12.02.22 12:18',
+      text: 'Это будет первый комментарий на этой странице',
+      likes: '3',
+      isActiveLike: false
+    },
+    {
+      name: 'Варвара Н.',
+      date: '13.02.22 19:22',
+      text: 'Мне нравится как оформлена эта страница! ❤',
+      likes: '75',
+      isActiveLike: false
+    }
+  ]
+
+  const initUpdateLikesListeners = () => {
+      const likeButtonsElements = document.querySelectorAll(".like-button");
+
+      for (const likeButtonsElement of likeButtonsElements) {
+        likeButtonsElement.addEventListener("click", () => {
+          const index = likeButtonsElement.dataset.index;
+          countOfLikes = Number(arrOfComments[index].likes);
+          if (likeButtonsElement.classList.contains("-active-like")) {
+            countOfLikes -= 1;
+            arrOfComments[index].isActiveLike = false;
+          } else {
+            countOfLikes += 1;
+            arrOfComments[index].isActiveLike = true;
+          }
+          arrOfComments[index].likes = countOfLikes;
+          renderComments();
+        });
+      }
+    };
+
+  //рендер-функция преобразования из массива в html содержимое комментария
+  const renderComments = () => {
+    const commentsHTML = arrOfComments.map((item, index) => {
+      let activeLike = '';
+      if (arrOfComments[index].isActiveLike) {
+        activeLike = '-active-like'
+      }
+      return `<li class="comment">
+        <div class="comment-header">
+          <div>${item.name}</div>
+          <div>${item.date}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${item.text}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${item.likes}</span>
+            <button class="like-button ${activeLike}" data-index='${index}'></button>
+          </div>
+        </div>
+      </li>`
+    }).join('');
+
+    
+    elComments.innerHTML = commentsHTML;
+    initUpdateLikesListeners();
+    
+  }
+  renderComments();
+
   //Расширенная валидация
 
   function letDisabledButton(expectedValue) {
@@ -142,23 +183,17 @@
     }
 
     //добавляем новый коммент
-    elComments.innerHTML += `<li class="comment">
-  <div class="comment-header">
-    <div>${userNameInput.value}</div>
-    <div>${formatDate(currentDate)}</div>
-  </div>
-  <div class="comment-body">
-    <div class="comment-text">
-      ${userCommentInput.value}
-    </div>
-  </div>
-  <div class="comment-footer">
-    <div class="likes">
-      <span class="likes-counter">${countOfLikes}</span>
-      <button class="like-button"></button>
-    </div>
-  </div>
-</li>`;
+    countOfLikes = 0;
+
+    arrOfComments.push({
+      name: userNameInput.value,
+      date: formatDate(currentDate),
+      text: userCommentInput.value,
+      likes: countOfLikes,
+      isActiveLike: false
+    });
+
+    renderComments();
 
     //очищаем поля
     userNameInput.value = "";
@@ -175,14 +210,19 @@
   })
 
   //обработчик удаления комментария:
+  
+  // deleteButton.addEventListener('click', () => {
+  //   const usArray = elComments.innerHTML.split('');
+  //   const lengthOfArray = usArray.length;
+  //   for (let i = 0; i < lengthOfArray - elComments.innerHTML.lastIndexOf('<li class="comment">'); i++) {
+  //     usArray.pop();
+  //   };
+  //   elComments.innerHTML = usArray.join('');
+  // })
   deleteButton.addEventListener('click', () => {
-    const usArray = elComments.innerHTML.split('');
-    const lengthOfArray = usArray.length;
-    for (let i = 0; i < lengthOfArray - elComments.innerHTML.lastIndexOf('<li class="comment">'); i++) {
-      usArray.pop();
-    };
-    elComments.innerHTML = usArray.join('');
-  })
+      arrOfComments.pop();
+      renderComments();
+    })
 
   console.log("It works!");
 
