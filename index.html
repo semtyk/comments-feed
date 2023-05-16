@@ -49,14 +49,14 @@
       name: 'Глеб Фокин',
       date: '12.02.22 12:18',
       text: 'Это будет первый комментарий на этой странице',
-      likes: '3',
+      likes: 3,
       isActiveLike: false
     },
     {
       name: 'Варвара Н.',
       date: '13.02.22 19:22',
       text: 'Мне нравится как оформлена эта страница! ❤',
-      likes: '75',
+      likes: 75,
       isActiveLike: false
     }
   ]
@@ -68,10 +68,10 @@
       likeButtonsElement.addEventListener("click", (e) => {
         e.stopPropagation();
         const index = likeButtonsElement.dataset.index;
-        if (likeButtonsElement.classList.contains("-active-like")) {
-          arrOfComments[index].likes = Number(arrOfComments[index].likes) - 1;
+        if (arrOfComments[index].isActiveLike) {
+          arrOfComments[index].likes--;
         } else {
-          arrOfComments[index].likes = Number(arrOfComments[index].likes) + 1;
+          arrOfComments[index].likes++;
         }
         arrOfComments[index].isActiveLike = !arrOfComments[index].isActiveLike;
         renderComments();
