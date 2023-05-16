@@ -18,7 +18,7 @@
         rows="4"></textarea>
       <div class="add-form-row">
         <button class="add-form-button" id="buttonForDeleteComment">Удалить</button>
-        <button class="add-form-button" id="buttonForWriteComment">Написать</button>
+        <button class="add-form-button add-form-button_disable" id="buttonForWriteComment" disabled>Написать</button>
       </div>
     </div>
   </div>
@@ -38,8 +38,8 @@
   const userNameInput = document.getElementById('inputForName');          //поле ввода имени
   const userCommentInput = document.getElementById('inputForComment');    //поле ввода коммента
 
-  commentButton.disabled = true;                                          //Отключили кнопку отправки комментария
-  commentButton.classList.add('add-form-button_disable');
+  //commentButton.disabled = true;                                          //Отключили кнопку отправки комментария Можно сразу в атрибутах отключить
+  //commentButton.classList.add('add-form-button_disable');
 
 
   //Обьявляем массив, содержащий объекты - ключи комментария
@@ -67,15 +67,12 @@
       for (const likeButtonsElement of likeButtonsElements) {
         likeButtonsElement.addEventListener("click", () => {
           const index = likeButtonsElement.dataset.index;
-          countOfLikes = Number(arrOfComments[index].likes);
           if (likeButtonsElement.classList.contains("-active-like")) {
-            countOfLikes -= 1;
-            arrOfComments[index].isActiveLike = false;
+            arrOfComments[index].likes = Number(arrOfComments[index].likes)-1;
           } else {
-            countOfLikes += 1;
-            arrOfComments[index].isActiveLike = true;
+            arrOfComments[index].likes = Number(arrOfComments[index].likes)+1;
           }
-          arrOfComments[index].likes = countOfLikes;
+          arrOfComments[index].isActiveLike = !arrOfComments[index].isActiveLike;
           renderComments();
         });
       }
@@ -112,6 +109,7 @@
     initUpdateLikesListeners();
     
   }
+
   renderComments();
 
   //Расширенная валидация
