@@ -72,6 +72,14 @@
   //****************************************************************************************
   //ОБьявляем вспомогательные функции ---------------------------------------------------------
   //****************************************************************************************
+  //Функция задержки для использования вместо промисов
+  function delay(interval) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, interval);
+      });
+    }
 
   //Функция для форматирования даты под коммент
 
@@ -102,14 +110,18 @@
       likeButtonsElement.addEventListener("click", (e) => {
         e.stopPropagation();
         const index = likeButtonsElement.dataset.index;
-        if (arrOfComments[index].isActiveLike) {
-          arrOfComments[index].likes--;
-        } else {
-          arrOfComments[index].likes++;
-        }
-        arrOfComments[index].isActiveLike = !arrOfComments[index].isActiveLike;
-
-        renderComments();
+        likeButtonsElement.classList.add('-loading-like');
+        delay(1000).then(()=> {
+          if (arrOfComments[index].isActiveLike) {
+            arrOfComments[index].likes--;
+          } else {
+            arrOfComments[index].likes++;
+          }
+          arrOfComments[index].isActiveLike = !arrOfComments[index].isActiveLike;
+          likeButtonsElement.classList.remove('-loading-like');
+          renderComments();
+        })
+        
       });
     }
   };
