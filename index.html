@@ -17,7 +17,7 @@
       <textarea id="inputForComment" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
       <div class="add-form-row">
-        <button class="add-form-button" id="buttonForDeleteComment">Удалить</button>
+        <!-- <button class="add-form-button" id="buttonForDeleteComment">Удалить</button> -->
         <button class="add-form-button add-form-button_disable" id="buttonForWriteComment" disabled>Написать</button>
       </div>
     </div>
@@ -30,8 +30,8 @@
 
   //Инициализация переменных
 
-  let countOfLikes = 0; //счетчик лайков
-
+  //let countOfLikes = 0; //счетчик лайков
+  let arrOfComments = []; //Массив комментов
   const commentButton = document.getElementById('buttonForWriteComment');   //кнопка для отправки коммента
   const deleteButton = document.getElementById('buttonForDeleteComment');   //кнопка для удаления коммента
   const elComments = document.getElementById('blockOfComments');          //страница с комментами
@@ -42,24 +42,53 @@
   //commentButton.classList.add('add-form-button_disable');
 
 
+
   //Обьявляем массив, содержащий объекты - ключи комментария
 
-  const arrOfComments = [
-    {
-      name: 'Глеб Фокин',
-      date: '12.02.22 12:18',
-      text: 'Это будет первый комментарий на этой странице',
-      likes: 3,
-      isActiveLike: false
-    },
-    {
-      name: 'Варвара Н.',
-      date: '13.02.22 19:22',
-      text: 'Мне нравится как оформлена эта страница! ❤',
-      likes: 75,
-      isActiveLike: false
+  // const arrOfComments = [
+  //   {
+  //     name: 'Глеб Фокин',
+  //     date: '12.02.22 12:18',
+  //     text: 'Это будет первый комментарий на этой странице',
+  //     likes: 3,
+  //     isActiveLike: false
+  //   },
+  //   {
+  //     name: 'Варвара Н.',
+  //     date: '13.02.22 19:22',
+  //     text: 'Мне нравится как оформлена эта страница! ❤',
+  //     likes: 75,
+  //     isActiveLike: false
+  //   }
+  // ]
+
+
+
+  //****************************************************************************************
+  //ОБьявляем вспомогательные функции ---------------------------------------------------------
+  //****************************************************************************************
+
+  //Функция для форматирования даты под коммент
+
+  const formatDate = (dateObject) => {
+    let minutes = dateObject.getMinutes();
+    let months = dateObject.getMonth() + 1;
+    let years = dateObject.getFullYear() - 2000;
+    let days = dateObject.getDate();
+    if (days < 10) {
+      days = "0" + days;
     }
-  ]
+    if (minutes < 10) {
+      minutes = "0" + minutes;
+    }
+    if (months < 10) {
+      months = "0" + months;
+    }
+    const outDate = days + '.' + months + '.' + years + '  ' + dateObject.getHours() + ':' + minutes;
+    return outDate;
+  }
+
+  //Функция для включения кнопки лайка на любом из комментов
 
   const initUpdateLikesListeners = () => {
     const likeButtonsElements = document.querySelectorAll(".like-button");
@@ -79,6 +108,8 @@
     }
   };
 
+  //Функция для функционала ответ на комментарий
+
   const initAnswerComment = () => {
     const oldComments = document.querySelectorAll('.comment')
     for (const oldComment of oldComments) {
@@ -86,29 +117,31 @@
         // userCommentInput.value = `цитата: ${oldComment.querySelector('.comment-text').innerHTML}`
         //   + `\n\n${oldComment.querySelector('.comment-header').children[0].innerHTML},`
         userCommentInput.value = `> ${oldComment.querySelector('.comment-text').innerHTML
-          .replaceAll("&amp;" , "&")
-          .replaceAll("&lt;" , "<")
-          .replaceAll("&gt;" , ">")
-          .replaceAll("&quot;" , '"')}`
+          .replaceAll("&amp;", "&")
+          .replaceAll("&lt;", "<")
+          .replaceAll("&gt;", ">")
+          .replaceAll("&quot;", '"')}`
           + `\n\n${oldComment.querySelector('.comment-header').children[0].innerHTML
             .replaceAll("&amp;", "&")
             .replaceAll("&lt;", "<")
             .replaceAll("&gt;", ">")
-            .replaceAll("&quot;", '"') },`
+            .replaceAll("&quot;", '"')},`
       })
     }
   }
+
   //рендер-функция преобразования из массива в html содержимое комментария
+
   const renderComments = () => {
     const commentsHTML = arrOfComments.map((item, index) => {
       let activeLike = '';
-      if (arrOfComments[index].isActiveLike) {
+      if (item.isActiveLike) {
         activeLike = '-active-like'
       }
       return `<li class="comment">
         <div class="comment-header">
           <div>${item.name}</div>
-          <div>${item.date}</div>
+          <div>${formatDate(item.date)}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">${item.text}</div>
@@ -116,7 +149,7 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${item.likes}</span>
-            <button class="like-button ${activeLike}" data-index='${index}'></button>
+            <button class="like-button ${activeLike}" data-id='${item.id}' data-index='${index}'></button>
           </div>
         </div>
       </li>`
@@ -129,7 +162,24 @@
 
   }
 
-  renderComments();
+  //Функция преобразования данных с сервера в массив комментариев
+  const convertServToArr = (response) => {
+    response.json().then((responseData) => {
+      arrOfComments = responseData.comments;
+      arrOfComments = arrOfComments.map((item) => {
+        return {
+          name: item.author.name,
+          date: new Date(item.date),
+          text: item.text,
+          likes: item.likes,
+          isActiveLike: item.isLiked,
+          id: item.id,
+        }
+      });
+      renderComments();
+      //console.log(arrOfComments);
+    })
+  }
 
   //Расширенная валидация
 
@@ -143,10 +193,100 @@
     }
   };
 
+  //Очистка формы
+
   function letClearForm(form) {
     form.classList.remove('error');
   };
 
+  //Функция вызываемая по нажатии кнопки отправки коммента
+
+    const sendComment = () => {
+      userNameInput.classList.remove('error');
+      userCommentInput.classList.remove('error');
+
+      let currentDate = new Date(); //получаем текущую дату именно в обработчике, иначе она у нас обновляться не будет
+
+      //валидация что поля не пустые и содержат больше 3х символов
+      if (userNameInput.value === "" || userNameInput.value.length < 3) {
+        userNameInput.classList.add('error');
+        if (userCommentInput.value.replaceAll("\n", "") === "" /*|| userCommentInput.value === "\n"*/ || userCommentInput.value.replaceAll("\n", "").length < 3) {
+          userCommentInput.classList.add('error');
+        }
+        return;
+      }
+      if (userCommentInput.value.replaceAll("\n", "") === "" /*|| userCommentInput.value === "\n"*/ || userCommentInput.value.replaceAll("\n", "").length < 3) {
+        userCommentInput.classList.add('error');
+        return;
+      }
+
+      //добавляем новый коммент
+      //countOfLikes = 0;
+
+      // arrOfComments.push({
+      //   name: userNameInput.value
+      //     .replaceAll("&", "&amp;")
+      //     .replaceAll("<", "&lt;")
+      //     .replaceAll(">", "&gt;")
+      //     .replaceAll('"', "&quot;"),
+      //   date: currentDate,
+
+      //   text: userCommentInput.value
+      //     .replaceAll("&", "&amp;")
+      //     .replaceAll("<", "&lt;")
+      //     .replaceAll(">", "&gt;")
+      //     .replaceAll('"', "&quot;"),
+      //   likes: countOfLikes,
+      //   isActiveLike: false,
+      //   id: Number(arrOfComments[arrOfComments.length - 1].id)+1,
+      // });
+
+      //Отправляем обьект { "text": "...", "name": "..." } на сервер
+      fetch('https://webdev-hw-api.vercel.app/api/v1/sergey-matveev/comments', {
+        method: 'POST',
+        body: JSON.stringify({
+          text: userCommentInput.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
+          name: userNameInput.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+        })
+      }).then((response) => {
+        if (response.status == 201) {
+          askDataServ();
+        } else {
+          console.log(response.status);
+        }
+      });
+
+      //очищаем поля
+      userNameInput.value = "";
+      userCommentInput.value = "";
+    };
+
+  //***************************************************************************************************************
+  //*********************************************************************************************************
+  //---- Выполняемый код --------------------
+  //*********************************************************************************************************
+  //***************************************************************************************************************
+
+  //инициализируем запрос на сервер
+
+  function askDataServ() {
+    fetch('https://webdev-hw-api.vercel.app/api/v1/sergey-matveev/comments', {
+            method: 'GET',
+          }).then((response) => {
+            convertServToArr(response);
+          })
+  };
+  askDataServ();
+
+  //инициализируем подписку на события клика и ввода в поля имени и комментария
 
   userNameInput.addEventListener('input', () => {
     letDisabledButton(userNameInput.value)
@@ -161,72 +301,11 @@
     letClearForm(userCommentInput);
   });
 
-  //Функция для форматирования даты под коммент
-  const formatDate = (dateObject) => {
-    let minutes = dateObject.getMinutes();
-    let months = dateObject.getMonth() + 1;
-    let years = dateObject.getFullYear() - 2000;
-    if (minutes < 10) {
-      minutes = "0" + minutes;
-    }
-    if (months < 10) {
-      months = "0" + months;
-    }
-    const outDate = dateObject.getDate() + '.' + months + '.' + years + '  ' + dateObject.getHours() + ':' + minutes;
-    return outDate;
-  }
 
-  //обработчик нажатия на кнопку отправки коммента
-
-  //Функция вызываемая в обработчике:
-
-  const sendComment = () => {
-    userNameInput.classList.remove('error');
-    userCommentInput.classList.remove('error');
-
-    let currentDate = new Date(); //получаем текущую дату именно в обработчике, иначе она у нас обновляться не будет
-
-    //валидация что поля не пустые
-    if (userNameInput.value === "") {
-      userNameInput.classList.add('error');
-      if (userCommentInput.value === "" || userCommentInput.value === "\n") {
-        userCommentInput.classList.add('error');
-      }
-      return;
-    }
-    if (userCommentInput.value === "" || userCommentInput.value === "\n") {
-      userCommentInput.classList.add('error');
-      return;
-    }
-
-    //добавляем новый коммент
-    countOfLikes = 0;
-
-    arrOfComments.push({
-      name: userNameInput.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      date: formatDate(currentDate),
-      text: userCommentInput.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      likes: countOfLikes,
-      isActiveLike: false
-    });
-
-    renderComments();
-
-    //очищаем поля
-    userNameInput.value = "";
-    userCommentInput.value = "";
-  };
-
-  //обработчик по кнопке отправки коммента:
+  
+  //инициализируем подписку на событие по клику по кнопке отправки коммента:
   commentButton.addEventListener('click', sendComment);
+  
   //обработчик по клавише enter:
   document.addEventListener('keyup', (e) => {
     if (e.code === 'Enter') {
@@ -244,10 +323,10 @@
   //   };
   //   elComments.innerHTML = usArray.join('');
   // })
-  deleteButton.addEventListener('click', () => {
-    arrOfComments.pop();
-    renderComments();
-  })
+  // deleteButton.addEventListener('click', () => {
+  //   arrOfComments.pop();
+  //   renderComments();
+  // })
 
   console.log("It works!");
 
