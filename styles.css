@@ -143,3 +143,12 @@ body {
 .error {
   background-color: rgb(241, 96, 96);
 }
+
+.text-while-add-comment {
+  font-size: 32px;
+
+}
+
+.dpnone {
+  display: none;
+}
