@@ -12,6 +12,9 @@
     <ul class="comments" id="blockOfComments">
       <!-- Список рендерится в JS -->
     </ul>
+    <div class="text-while-add-comment dpnone">
+      Пожалуйста подождите, комментарий добавляется...
+    </div>
     <div class="add-form">
       <input id="inputForName" type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea id="inputForComment" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
@@ -37,6 +40,8 @@
   const elComments = document.getElementById('blockOfComments');          //страница с комментами
   const userNameInput = document.getElementById('inputForName');          //поле ввода имени
   const userCommentInput = document.getElementById('inputForComment');    //поле ввода коммента
+  const messageCommentAdd = document.querySelector('.text-while-add-comment');  //сообщение что коммент отправляется
+  const formForComment = document.querySelector('.add-form');                   //форма ввода комментария
 
   //commentButton.disabled = true;                                          //Отключили кнопку отправки комментария Можно сразу в атрибутах отключить
   //commentButton.classList.add('add-form-button_disable');
@@ -67,6 +72,14 @@
   //****************************************************************************************
   //ОБьявляем вспомогательные функции ---------------------------------------------------------
   //****************************************************************************************
+  //Функция задержки для использования вместо промисов
+  function delay(interval) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, interval);
+      });
+    }
 
   //Функция для форматирования даты под коммент
 
@@ -97,13 +110,18 @@
       likeButtonsElement.addEventListener("click", (e) => {
         e.stopPropagation();
         const index = likeButtonsElement.dataset.index;
-        if (arrOfComments[index].isActiveLike) {
-          arrOfComments[index].likes--;
-        } else {
-          arrOfComments[index].likes++;
-        }
-        arrOfComments[index].isActiveLike = !arrOfComments[index].isActiveLike;
-        renderComments();
+        likeButtonsElement.classList.add('-loading-like');
+        delay(1000).then(()=> {
+          if (arrOfComments[index].isActiveLike) {
+            arrOfComments[index].likes--;
+          } else {
+            arrOfComments[index].likes++;
+          }
+          arrOfComments[index].isActiveLike = !arrOfComments[index].isActiveLike;
+          likeButtonsElement.classList.remove('-loading-like');
+          renderComments();
+        })
+        
       });
     }
   };
@@ -164,7 +182,7 @@
 
   //Функция преобразования данных с сервера в массив комментариев
   const convertServToArr = (response) => {
-    response.json().then((responseData) => {
+    return response.json().then((responseData) => {
       arrOfComments = responseData.comments;
       arrOfComments = arrOfComments.map((item) => {
         return {
@@ -204,6 +222,7 @@
     const sendComment = () => {
       userNameInput.classList.remove('error');
       userCommentInput.classList.remove('error');
+      
 
       let currentDate = new Date(); //получаем текущую дату именно в обработчике, иначе она у нас обновляться не будет
 
@@ -219,7 +238,8 @@
         userCommentInput.classList.add('error');
         return;
       }
-
+      formForComment.classList.add('dpnone');           //если валидация пройдена то заменяем форму отправки комментария текстовой заглушкой
+      messageCommentAdd.classList.remove('dpnone');
       //добавляем новый коммент
       //countOfLikes = 0;
 
@@ -258,10 +278,15 @@
         })
       }).then((response) => {
         if (response.status == 201) {
-          askDataServ();
+          return askDataServ();
         } else {
           console.log(response.status);
+          return response;
         }
+      })
+      .then(()=>{
+        formForComment.classList.remove('dpnone');    //после успешного получения комментариев, заменяем текстовую заглушку формой отправки комментария 
+        messageCommentAdd.classList.add('dpnone');
       });
 
       //очищаем поля
@@ -278,13 +303,16 @@
   //инициализируем запрос на сервер
 
   function askDataServ() {
-    fetch('https://webdev-hw-api.vercel.app/api/v1/sergey-matveev/comments', {
+    return fetch('https://webdev-hw-api.vercel.app/api/v1/sergey-matveev/comments', {
             method: 'GET',
           }).then((response) => {
             convertServToArr(response);
           })
   };
-  askDataServ();
+
+  elComments.innerHTML = 'Пожалуйста подождите, комментарии загружаются...';    //Вставляем заглушку на мето пока не прогрузившегося блока с комментами
+  askDataServ();      //Заправшиваем данные с сервера и рендерим блок с комментами
+  
 
   //инициализируем подписку на события клика и ввода в поля имени и комментария
 
