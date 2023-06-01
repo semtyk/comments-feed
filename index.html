@@ -74,12 +74,12 @@
   //****************************************************************************************
   //Функция задержки для использования вместо промисов
   function delay(interval) {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve();
-        }, interval);
-      });
-    }
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, interval);
+    });
+  }
 
   //Функция для форматирования даты под коммент
 
@@ -111,7 +111,7 @@
         e.stopPropagation();
         const index = likeButtonsElement.dataset.index;
         likeButtonsElement.classList.add('-loading-like');
-        delay(1000).then(()=> {
+        delay(1000).then(() => {
           if (arrOfComments[index].isActiveLike) {
             arrOfComments[index].likes--;
           } else {
@@ -121,7 +121,7 @@
           likeButtonsElement.classList.remove('-loading-like');
           renderComments();
         })
-        
+
       });
     }
   };
@@ -219,80 +219,104 @@
 
   //Функция вызываемая по нажатии кнопки отправки коммента
 
-    const sendComment = () => {
-      userNameInput.classList.remove('error');
-      userCommentInput.classList.remove('error');
-      
+  const sendComment = () => {
+    userNameInput.classList.remove('error');
+    userCommentInput.classList.remove('error');
 
-      let currentDate = new Date(); //получаем текущую дату именно в обработчике, иначе она у нас обновляться не будет
 
-      //валидация что поля не пустые и содержат больше 3х символов
-      if (userNameInput.value === "" || userNameInput.value.length < 3) {
-        userNameInput.classList.add('error');
-        if (userCommentInput.value.replaceAll("\n", "") === "" /*|| userCommentInput.value === "\n"*/ || userCommentInput.value.replaceAll("\n", "").length < 3) {
-          userCommentInput.classList.add('error');
-        }
-        return;
-      }
-      if (userCommentInput.value.replaceAll("\n", "") === "" /*|| userCommentInput.value === "\n"*/ || userCommentInput.value.replaceAll("\n", "").length < 3) {
+    let currentDate = new Date(); //получаем текущую дату именно в обработчике, иначе она у нас обновляться не будет
+
+    //валидация что поля не пустые и содержат больше 3х символов
+    if (userNameInput.value === "" /*|| userNameInput.value.length < 3*/) {
+      userNameInput.classList.add('error');
+      if (userCommentInput.value.replaceAll("\n", "") === "" /*|| userCommentInput.value === "\n"*/ /*|| userCommentInput.value.replaceAll("\n", "").length < 3*/) {
         userCommentInput.classList.add('error');
-        return;
       }
-      formForComment.classList.add('dpnone');           //если валидация пройдена то заменяем форму отправки комментария текстовой заглушкой
-      messageCommentAdd.classList.remove('dpnone');
-      //добавляем новый коммент
-      //countOfLikes = 0;
+      return;
+    }
+    if (userCommentInput.value.replaceAll("\n", "") === "" /*|| userCommentInput.value === "\n"*/ /*|| userCommentInput.value.replaceAll("\n", "").length < 3*/) {
+      userCommentInput.classList.add('error');
+      return;
+    }
+    formForComment.classList.add('dpnone');           //если валидация пройдена то заменяем форму отправки комментария текстовой заглушкой
+    messageCommentAdd.classList.remove('dpnone');
+    //добавляем новый коммент
+    //countOfLikes = 0;
 
-      // arrOfComments.push({
-      //   name: userNameInput.value
-      //     .replaceAll("&", "&amp;")
-      //     .replaceAll("<", "&lt;")
-      //     .replaceAll(">", "&gt;")
-      //     .replaceAll('"', "&quot;"),
-      //   date: currentDate,
+    // arrOfComments.push({
+    //   name: userNameInput.value
+    //     .replaceAll("&", "&amp;")
+    //     .replaceAll("<", "&lt;")
+    //     .replaceAll(">", "&gt;")
+    //     .replaceAll('"', "&quot;"),
+    //   date: currentDate,
 
-      //   text: userCommentInput.value
-      //     .replaceAll("&", "&amp;")
-      //     .replaceAll("<", "&lt;")
-      //     .replaceAll(">", "&gt;")
-      //     .replaceAll('"', "&quot;"),
-      //   likes: countOfLikes,
-      //   isActiveLike: false,
-      //   id: Number(arrOfComments[arrOfComments.length - 1].id)+1,
-      // });
+    //   text: userCommentInput.value
+    //     .replaceAll("&", "&amp;")
+    //     .replaceAll("<", "&lt;")
+    //     .replaceAll(">", "&gt;")
+    //     .replaceAll('"', "&quot;"),
+    //   likes: countOfLikes,
+    //   isActiveLike: false,
+    //   id: Number(arrOfComments[arrOfComments.length - 1].id)+1,
+    // });
 
-      //Отправляем обьект { "text": "...", "name": "..." } на сервер
-      fetch('https://webdev-hw-api.vercel.app/api/v1/sergey-matveev/comments', {
-        method: 'POST',
-        body: JSON.stringify({
-          text: userCommentInput.value
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;"),
-          name: userNameInput.value
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;")
-        })
-      }).then((response) => {
-        if (response.status == 201) {
-          return askDataServ();
-        } else {
-          console.log(response.status);
-          return response;
-        }
+    //Отправляем обьект { "text": "...", "name": "..." } на сервер
+    fetch('https://webdev-hw-api.vercel.app/api/v1/sergey-matveev/comments', {
+      method: 'POST',
+      body: JSON.stringify({
+        text: userCommentInput.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
+        name: userNameInput.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
+        forceError: true,
       })
-      .then(()=>{
+    }).then((response) => {
+      switch (response.status) {    //смотрим коды ответа сервера
+        case 201:                   //тут все гуд, данные отправлены, значит нам надо их получить обратно и срендерить (это внутри функции askDataServ)
+          return askDataServ();
+          break;
+        case 400:                   //тут ошибка, принудительно прерываем промис
+          return Promise.reject(new Error('меньше 3 символов'));
+          break;
+        case 500:                   //тут ошибка, принудительно прерываем промис
+          return Promise.reject(new Error('сервер сломался'));
+          break;
+        default:
+          break;
+      }
+    })
+      .then(() => {
         formForComment.classList.remove('dpnone');    //после успешного получения комментариев, заменяем текстовую заглушку формой отправки комментария 
         messageCommentAdd.classList.add('dpnone');
+        userNameInput.value = "";                     //очищаем поля
+        userCommentInput.value = "";
+      })
+      .catch((error)=> {                               //ловим и обрабатываем ошибки в цепочках промисов
+        formForComment.classList.remove('dpnone');    //в случае ошибок от сервера, заменяем текстовую заглушку формой отправки комментария 
+        messageCommentAdd.classList.add('dpnone');
+        switch (error.message) {
+          case 'меньше 3 символов':
+            alert('Имя и комментарий должны быть не короче 3 символов')
+            break;
+          case 'сервер сломался':
+            //alert('Сервер сломался, попробуй позже');
+            console.log('Сервер сломался, попробуй позже');
+            sendComment();
+            break;
+          default:
+            alert('Кажется, у вас сломался интернет, попробуйте позже')
+            break;
+        }
+        //renderComments();
       });
-
-      //очищаем поля
-      userNameInput.value = "";
-      userCommentInput.value = "";
-    };
+  };
 
   //***************************************************************************************************************
   //*********************************************************************************************************
@@ -304,15 +328,18 @@
 
   function askDataServ() {
     return fetch('https://webdev-hw-api.vercel.app/api/v1/sergey-matveev/comments', {
-            method: 'GET',
-          }).then((response) => {
-            convertServToArr(response);
-          })
+      method: 'GET',
+    }).then((response) => {
+      convertServToArr(response);
+    })
+    .catch((error) => {
+      alert('Кажется, у вас сломался интернет, попробуйте позже');
+    })
   };
 
   elComments.innerHTML = 'Пожалуйста подождите, комментарии загружаются...';    //Вставляем заглушку на мето пока не прогрузившегося блока с комментами
   askDataServ();      //Заправшиваем данные с сервера и рендерим блок с комментами
-  
+
 
   //инициализируем подписку на события клика и ввода в поля имени и комментария
 
@@ -330,10 +357,10 @@
   });
 
 
-  
+
   //инициализируем подписку на событие по клику по кнопке отправки коммента:
   commentButton.addEventListener('click', sendComment);
-  
+
   //обработчик по клавише enter:
   document.addEventListener('keyup', (e) => {
     if (e.code === 'Enter') {
