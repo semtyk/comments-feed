@@ -38,17 +38,17 @@ export function renderLoginComponents(appElement, askDataServ) {
         })
 
 
-        // document.getElementById('buttonForReg').addEventListener('click', () => {
-        //     if (isLoginMode) {
-        //         authorizationUser((newToken) => {
-        //             token = newToken;
-        //         });
-        //     } else {
-        //         registrationUser((newToken) => {
-        //             token = newToken;
-        //         });
-        //     }
-        // })
+        document.getElementById('buttonForReg').addEventListener('click', () => {
+            if (isLoginMode) {
+                authorizationUser((newToken) => {
+                    token = newToken;
+                });
+            } else {
+                registrationUser((newToken) => {
+                    token = newToken;
+                });
+            }
+        })
 
     }
 

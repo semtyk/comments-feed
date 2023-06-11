@@ -112,6 +112,7 @@ export const authorizationUser = (setToken) => {
             alert(error.message);
         })
 }
+
 //---функция регистрации:
 export const registrationUser = (setToken) => {
     const login = document.getElementById('inputForRegLogin').value;

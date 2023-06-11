@@ -53,13 +53,10 @@ export const renderComments = (array) => {
       </li>`
   }).join('');
 
-
   elComments.innerHTML = commentsHTML;
-  initUpdateLikesListeners(array);
-  initAnswerComment();
 }
 
-const renderApp = () => {
+const renderApp = (array) => {
   const appElement = document.getElementById('app');
 
   if (!token) {
@@ -67,46 +64,46 @@ const renderApp = () => {
     return;
   }
 
-  // const commentsHTML = array.map((item, index) => {
-  //   let activeLike = '';
-  //   if (item.isActiveLike) {
-  //     activeLike = '-active-like'
-  //   }
-  //   return `<li class="comment">
-  //       <div class="comment-header">
-  //         <div>${item.name}</div>
-  //         <div>${formatDate(item.date)}</div>
-  //       </div>
-  //       <div class="comment-body">
-  //         <div class="comment-text">${item.text}</div>
-  //       </div>
-  //       <div class="comment-footer">
-  //         <div class="likes">
-  //           <span class="likes-counter">${item.likes}</span>
-  //           <button class="like-button ${activeLike}" data-id='${item.id}' data-index='${index}'></button>
-  //         </div>
-  //       </div>
-  //     </li>`
-  // }).join('');
+  const commentsHTML = array.map((item, index) => {
+    let activeLike = '';
+    if (item.isActiveLike) {
+      activeLike = '-active-like'
+    }
+    return `<li class="comment">
+        <div class="comment-header">
+          <div>${item.name}</div>
+          <div>${formatDate(item.date)}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">${item.text}</div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${item.likes}</span>
+            <button class="like-button ${activeLike}" data-id='${item.id}' data-index='${index}'></button>
+          </div>
+        </div>
+      </li>`
+  }).join('');
 
 
-  // const appHtml = `
-  //           < ul class="comments" id = "blockOfComments" >
-  //         ${commentsHTML}
-  //       </ul >
-  //       <div class="text-while-add-comment dpnone">
-  //         Пожалуйста подождите, комментарий добавляется...
-  //       </div>
-  //       <div class="add-form">
-  //         <input id="inputForName" type="text" class="add-form-name" placeholder="Введите ваше имя" />
-  //         <textarea id="inputForComment" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
-  //           rows="4"></textarea>
-  //         <div class="add-form-row">
-  //           <button class="add-form-button add-form-button_disable" id="buttonForWriteComment" disabled>Написать</button>
-  //         </div>
-  //       </div>`;
+  const appHtml = `
+            <ul class="comments" id = "blockOfComments">
+          ${commentsHTML}
+        </ul >
+        <div class="text-while-add-comment dpnone">
+          Пожалуйста подождите, комментарий добавляется...
+        </div>
+        <div class="add-form">
+          <input id="inputForName" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+          <textarea id="inputForComment" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+            rows="4"></textarea>
+          <div class="add-form-row">
+            <button class="add-form-button add-form-button_disable" id="buttonForWriteComment" disabled>Написать</button>
+          </div>
+        </div>`;
 
-  // appElement.innerHTML = appHtml;
+  appElement.innerHTML = appHtml;
   //initUpdateLikesListeners(array);
   //initAnswerComment();
 }
