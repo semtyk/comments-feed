@@ -104,8 +104,8 @@ const renderApp = (array) => {
         </div>`;
 
   appElement.innerHTML = appHtml;
-  //initUpdateLikesListeners(array);
-  //initAnswerComment();
+  initUpdateLikesListeners(array);
+  initAnswerComment();
 }
 
 export { renderApp };

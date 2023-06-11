@@ -16,7 +16,7 @@ import { renderApp } from "./render.js";
 //elComments.innerHTML = 'Пожалуйста подождите, комментарии загружаются...';    //Вставляем заглушку на место пока не прогрузившегося блока с комментами
 
 //askDataServ();      //Заправшиваем данные с сервера и рендерим блок с комментами
-renderApp();
+renderApp(arrOfComments);
 
 //инициализируем подписку на события клика и ввода в поля имени и комментария
 const userNameInput = document.getElementById('inputForName');          //поле ввода имени
