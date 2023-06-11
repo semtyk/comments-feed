@@ -2,9 +2,10 @@
 //этот файл содержит подпрограммы, активируемые при нажатии каких либо элементов на странице
 
 import { renderComments } from "./render.js";       //импорт рендер функции
-import { userCommentInput, userNameInput, formForComment, messageCommentAdd } from "./variables.js";        //импорт переменных
-import { sendDataServ } from "./api.js";            //импорт функции отправки данных на сервер
+import { userCommentInput, userNameInput, formForComment, messageCommentAdd} from "./variables.js";        //импорт переменных
+import { askDataServ, sendDataServ } from "./api.js";            //импорт функции отправки данных на сервер
 import { letClearForm } from "./changeElement.js";
+import { loginUser, regUser } from "./api.js";
 
 //Функция задержки для использования вместо промисов
 function delay(interval) {
@@ -87,5 +88,57 @@ const sendComment = () => {
     sendDataServ();
 };
 
-export {initUpdateLikesListeners, initAnswerComment, sendComment}
+
+
+//Функции, вызываемые при нажатии на кнопку входа/регистрации 
+//---функция авторизации:
+export const authorizationUser = (setToken) => {
+    const login = document.getElementById('inputForRegLogin').value;
+    const password = document.getElementById('inputForRegPassword').value;
+    if (!login) {
+        alert('Введите логин');
+        return;
+    }
+    if (!password) {
+        alert('Введите пароль');
+        return;
+    }
+    loginUser(login, password)      
+        .then((user) => {
+            setToken(`Bearer ${user.user.token}`); 
+            askDataServ(); //ПРОВЕРИТЬ че КУДА
+        })
+        .catch((error) => {
+            alert(error.message);
+        })
+}
+//---функция регистрации:
+export const registrationUser = (setToken) => {
+    const login = document.getElementById('inputForRegLogin').value;
+    const name = document.getElementById('inputForRegName').value;
+    const password = document.getElementById('inputForRegPassword').value;
+    if (!name) {
+        alert('Введите имя');
+        return;
+    }
+    if (!login) {
+        alert('Введите логин');
+        return;
+    }
+    if (!password) {
+        alert('Введите пароль');
+        return;
+    }
+    regUser(login, password, name)
+        .then((user) => {
+            setToken(`Bearer ${user.user.token}`); 
+            askDataServ(); //ПРОВЕРИТЬ че КУДА
+        })
+        .catch((error) => {
+            alert(error.message);
+        })
+}
+
+
+export { initUpdateLikesListeners, initAnswerComment, sendComment}
 

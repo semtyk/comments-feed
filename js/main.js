@@ -2,9 +2,10 @@
 
 
 import {askDataServ} from "./api.js";
-import { userCommentInput, userNameInput, elComments, commentButton} from "./variables.js";
+import { userCommentInput, commentButton, arrOfComments } from "./variables.js";
 import { letClearForm, letDisabledButton } from "./changeElement.js";
 import { sendComment } from "./push.js";
+import { renderApp } from "./render.js";
 
 //***************************************************************************************************************
 //*********************************************************************************************************
@@ -12,12 +13,13 @@ import { sendComment } from "./push.js";
 //*********************************************************************************************************
 //***************************************************************************************************************
 
-elComments.innerHTML = 'Пожалуйста подождите, комментарии загружаются...';    //Вставляем заглушку на место пока не прогрузившегося блока с комментами
+//elComments.innerHTML = 'Пожалуйста подождите, комментарии загружаются...';    //Вставляем заглушку на место пока не прогрузившегося блока с комментами
 
-askDataServ();      //Заправшиваем данные с сервера и рендерим блок с комментами
+//askDataServ();      //Заправшиваем данные с сервера и рендерим блок с комментами
+renderApp();
 
 //инициализируем подписку на события клика и ввода в поля имени и комментария
-
+const userNameInput = document.getElementById('inputForName');          //поле ввода имени
 userNameInput.addEventListener('input', () => {
     letDisabledButton(userNameInput.value)
 });
