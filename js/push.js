@@ -1,8 +1,8 @@
 'use strict'
 //этот файл содержит подпрограммы, активируемые при нажатии каких либо элементов на странице
 
-import { renderComments } from "./render.js";       //импорт рендер функции
-//import { userCommentInput, userNameInput, formForComment, messageCommentAdd} from "./variables.js";        //импорт переменных
+import { renderApp, renderComments } from "./render.js";       //импорт рендер функции
+import { currentUser} from "./variables.js";        //импорт переменных
 import { askDataServ, sendDataServ } from "./api.js";            //импорт функции отправки данных на сервер
 import { letClearForm } from "./changeElement.js";
 import { loginUser, regUser } from "./api.js";
@@ -34,7 +34,7 @@ const initUpdateLikesListeners = (array) => {
                 }
                 array[index].isActiveLike = !array[index].isActiveLike;
                 likeButtonsElement.classList.remove('-loading-like');
-                renderComments(array);      //после того как нажали на лайк, рендерим страницу (число лайков изменилось)
+                renderApp(array);      //после того как нажали на лайк, рендерим страницу (число лайков изменилось)
             })
 
         });
@@ -98,7 +98,7 @@ const sendComment = () => {
 
 //Функции, вызываемые при нажатии на кнопку входа/регистрации 
 //---функция авторизации:
-export const authorizationUser = (setToken) => {
+export const authorizationUser = (setToken, setUser) => {
     const login = document.getElementById('inputForRegLogin').value;
     const password = document.getElementById('inputForRegPassword').value;
     if (!login) {
@@ -112,7 +112,8 @@ export const authorizationUser = (setToken) => {
     loginUser(login, password)      
         .then((user) => {
             setToken(`Bearer ${user.user.token}`); 
-            askDataServ(); //ПРОВЕРИТЬ че КУДА
+            setUser(user.user.name);
+            askDataServ(); 
         })
         .catch((error) => {
             alert(error.message);
@@ -120,7 +121,7 @@ export const authorizationUser = (setToken) => {
 }
 
 //---функция регистрации:
-export const registrationUser = (setToken) => {
+export const registrationUser = (setToken, setUser) => {
     const login = document.getElementById('inputForRegLogin').value;
     const name = document.getElementById('inputForRegName').value;
     const password = document.getElementById('inputForRegPassword').value;
@@ -139,7 +140,8 @@ export const registrationUser = (setToken) => {
     regUser(login, password, name)
         .then((user) => {
             setToken(`Bearer ${user.user.token}`); 
-            askDataServ(); //ПРОВЕРИТЬ че КУДА
+            setUser(user.user.name);
+            askDataServ(); 
         })
         .catch((error) => {
             alert(error.message);

@@ -5,7 +5,7 @@
 import { initAnswerComment, initUpdateLikesListeners, sendComment } from "./push.js";        //импорт функций для ответа на коммент и лайка
 //import { userNameInput, userCommentInput, commentButton } from "./variables.js";
 import { askDataServ } from "./api.js";
-import { renderLoginComponents, token } from "./loginComponents.js";
+import { renderLoginComponents, token, currentUser } from "./loginComponents.js";
 import { letDisabledButton, letClearForm } from "./changeElement.js";
 
 //Функция для форматирования даты под коммент
@@ -60,6 +60,7 @@ export const renderComments = (array) => {
 
 const renderApp = (array) => {
   const appElement = document.getElementById('app');
+  
 
   if (!token) {
     renderLoginComponents(appElement, askDataServ);
@@ -97,7 +98,7 @@ const renderApp = (array) => {
           Пожалуйста подождите, комментарий добавляется...
         </div>
         <div class="add-form">
-          <input id="inputForName" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+          <input id="inputForName" type="text" class="add-form-name" value = ${currentUser} disabled/>
           <textarea id="inputForComment" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
             rows="4"></textarea>
           <div class="add-form-row">
@@ -106,7 +107,6 @@ const renderApp = (array) => {
         </div>`;
 
   appElement.innerHTML = appHtml;
-
   
   const userNameInput = document.getElementById('inputForName');          //поле ввода имени
   const userCommentInput = document.getElementById('inputForComment');    //поле ввода коммента

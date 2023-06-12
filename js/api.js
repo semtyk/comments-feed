@@ -4,12 +4,15 @@
 import { arrOfComments} from "./variables.js"; //импорт переменных
 import { convertServToArr } from "./datafunc.js";                                                                   //импорт функции преобразования данных с json в массив
 import { sendComment } from "./push.js";                                                                            //импорт функции отправки комментария 
-
+import { token } from "./loginComponents.js";
 //инициализируем запрос на сервер
 
 function askDataServ() {
     return fetch('https://wedev-api.sky.pro/api/v2/sergey-matveev/comments', {
         method: 'GET',
+        headers: {
+            Authorization: token,
+        },
     }).then((response) => {
         convertServToArr(response, arrOfComments);          //после получения ответа от сервера преобразуем данные с json в массив
     })
@@ -28,8 +31,11 @@ function sendDataServ() {
     const messageCommentAdd = document.querySelector('.text-while-add-comment');  //сообщение что коммент отправляется
     const formForComment = document.querySelector('.add-form');                   //форма ввода комментария
 
-    return fetch('https://webdev-hw-api.vercel.app/api/v1/sergey-matveev/comments', {
+    return fetch('https://webdev-hw-api.vercel.app/api/v2/sergey-matveev/comments', {
         method: 'POST',
+        headers: {
+            Authorization: token,
+        },
         body: JSON.stringify({
             text: userCommentInput.value
                 .replaceAll("&", "&amp;")
