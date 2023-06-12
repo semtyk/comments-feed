@@ -1,7 +1,7 @@
 'use strict'
 //этот файл содержит подпрограммы отправки и приема данных с сервера
 
-import { arrOfComments, userCommentInput, userNameInput, formForComment, messageCommentAdd } from "./variables.js"; //импорт переменных
+import { arrOfComments} from "./variables.js"; //импорт переменных
 import { convertServToArr } from "./datafunc.js";                                                                   //импорт функции преобразования данных с json в массив
 import { sendComment } from "./push.js";                                                                            //импорт функции отправки комментария 
 
@@ -22,6 +22,12 @@ function askDataServ() {
 //инициализируем отправку данных на сервер
 
 function sendDataServ() {
+    
+    const userNameInput = document.getElementById('inputForName');          //поле ввода имени
+    const userCommentInput = document.getElementById('inputForComment');    //поле ввода коммента
+    const messageCommentAdd = document.querySelector('.text-while-add-comment');  //сообщение что коммент отправляется
+    const formForComment = document.querySelector('.add-form');                   //форма ввода комментария
+
     return fetch('https://webdev-hw-api.vercel.app/api/v1/sergey-matveev/comments', {
         method: 'POST',
         body: JSON.stringify({

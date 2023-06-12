@@ -2,9 +2,11 @@
 //этот файл содержит рендер функцию
 
 
-import { initAnswerComment, initUpdateLikesListeners } from "./push.js";        //импорт функций для ответа на коммент и лайка
+import { initAnswerComment, initUpdateLikesListeners, sendComment } from "./push.js";        //импорт функций для ответа на коммент и лайка
+//import { userNameInput, userCommentInput, commentButton } from "./variables.js";
 import { askDataServ } from "./api.js";
 import { renderLoginComponents, token } from "./loginComponents.js";
+import { letDisabledButton, letClearForm } from "./changeElement.js";
 
 //Функция для форматирования даты под коммент
 
@@ -104,6 +106,39 @@ const renderApp = (array) => {
         </div>`;
 
   appElement.innerHTML = appHtml;
+
+  
+  const userNameInput = document.getElementById('inputForName');          //поле ввода имени
+  const userCommentInput = document.getElementById('inputForComment');    //поле ввода коммента
+  const commentButton = document.getElementById('buttonForWriteComment');   //кнопка для отправки коммента
+
+  //инициализируем подписку на события клика и ввода в поля имени и комментария
+
+  userNameInput.addEventListener('input', () => {
+    letDisabledButton(userNameInput.value)
+  });
+  userCommentInput.addEventListener('input', () => {
+    letDisabledButton(userCommentInput.value);
+  });
+  userNameInput.addEventListener('click', () => {
+    letClearForm(userNameInput);
+  });
+  userCommentInput.addEventListener('click', () => {
+    letClearForm(userCommentInput);
+  });
+
+
+  //инициализируем подписку на событие по клику по кнопке отправки коммента:
+  commentButton.addEventListener('click', sendComment);
+
+  //обработчик по клавише enter:
+  document.addEventListener('keyup', (e) => {
+    if (e.code === 'Enter') {
+      sendComment();
+    }
+  })
+
+  
   initUpdateLikesListeners(array);
   initAnswerComment();
 }

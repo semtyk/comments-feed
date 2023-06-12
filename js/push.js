@@ -2,7 +2,7 @@
 //этот файл содержит подпрограммы, активируемые при нажатии каких либо элементов на странице
 
 import { renderComments } from "./render.js";       //импорт рендер функции
-import { userCommentInput, userNameInput, formForComment, messageCommentAdd} from "./variables.js";        //импорт переменных
+//import { userCommentInput, userNameInput, formForComment, messageCommentAdd} from "./variables.js";        //импорт переменных
 import { askDataServ, sendDataServ } from "./api.js";            //импорт функции отправки данных на сервер
 import { letClearForm } from "./changeElement.js";
 import { loginUser, regUser } from "./api.js";
@@ -44,6 +44,7 @@ const initUpdateLikesListeners = (array) => {
 //Функция для функционала ответ на комментарий
 
 const initAnswerComment = () => {
+    const userCommentInput = document.getElementById('inputForComment');    //поле ввода коммента
     const oldComments = document.querySelectorAll('.comment')
     for (const oldComment of oldComments) {                         //при нажатии на коммент, пихаем его внутреннее содержимое в поле ввода комментария
         oldComment.addEventListener('click', () => {
@@ -64,6 +65,11 @@ const initAnswerComment = () => {
 //Функция вызываемая по нажатии кнопки отправки коммента
 
 const sendComment = () => {
+    const userNameInput = document.getElementById('inputForName');          //поле ввода имени
+    const userCommentInput = document.getElementById('inputForComment');    //поле ввода коммента
+    const messageCommentAdd = document.querySelector('.text-while-add-comment');  //сообщение что коммент отправляется
+    const formForComment = document.querySelector('.add-form');                   //форма ввода комментария
+
     letClearForm(userNameInput);
     letClearForm(userCommentInput);
 
