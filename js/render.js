@@ -3,7 +3,6 @@
 
 
 import { initAnswerComment, initUpdateLikesListeners, sendComment } from "./push.js";        //импорт функций для ответа на коммент и лайка
-//import { userNameInput, userCommentInput, commentButton } from "./variables.js";
 import { askDataServ } from "./api.js";
 import { renderLoginComponents, token, currentUser } from "./loginComponents.js";
 import { letDisabledButton, letClearForm } from "./changeElement.js";

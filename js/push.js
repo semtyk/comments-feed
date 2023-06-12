@@ -1,8 +1,7 @@
 'use strict'
 //этот файл содержит подпрограммы, активируемые при нажатии каких либо элементов на странице
 
-import { renderApp, renderComments } from "./render.js";       //импорт рендер функции
-import { currentUser} from "./variables.js";        //импорт переменных
+import { renderApp} from "./render.js";       //импорт рендер функции
 import { askDataServ, sendDataServ } from "./api.js";            //импорт функции отправки данных на сервер
 import { letClearForm } from "./changeElement.js";
 import { loginUser, regUser } from "./api.js";
