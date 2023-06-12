@@ -1,9 +1,3 @@
 # Проект "Комментарии"
-
-https://glebkaf.github.io/webdev-dom-homework/
-
-Верстка для учебного проекта студентов Skypro
-
-## Как разрабатывать
-
-Открой index.html в браузере
+Проект доступен по адресу
+https://semtyk.github.io/comments-feed/
