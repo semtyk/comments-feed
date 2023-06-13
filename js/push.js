@@ -108,10 +108,14 @@ export const authorizationUser = (setToken, setUser) => {
         alert('Введите пароль');
         return;
     }
+    document.getElementById('buttonForReg').innerHTML = 'Подождите...';
+    document.getElementById('buttonForReg').disabled = true;
     loginUser(login, password)      
         .then((user) => {
             setToken(`Bearer ${user.user.token}`); 
             setUser(user.user.name);
+            localStorage.setItem('token', `Bearer ${user.user.token}`);     //сохраняем в локал сторадж токен и логин
+            localStorage.setItem('user', user.user.name);
             askDataServ(); 
         })
         .catch((error) => {
@@ -136,10 +140,14 @@ export const registrationUser = (setToken, setUser) => {
         alert('Введите пароль');
         return;
     }
+    document.getElementById('buttonForReg').innerHTML = 'Подождите...';
+    document.getElementById('buttonForReg').disabled = true;
     regUser(login, password, name)
         .then((user) => {
             setToken(`Bearer ${user.user.token}`); 
             setUser(user.user.name);
+            localStorage.setItem('token', `Bearer ${user.user.token}`); //сохраняем в локал сторадж токен и логин
+            localStorage.setItem('user', user.user.name);
             askDataServ(); 
         })
         .catch((error) => {

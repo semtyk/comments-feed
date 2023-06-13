@@ -3,6 +3,10 @@ import { authorizationUser, registrationUser } from "./push.js";
 export let token = null;
 export let currentUser = null;
 
+export function getDataFromLocalStorage() {
+    token = localStorage.getItem('token');
+    currentUser = localStorage.getItem('user');
+}
 export function renderLoginComponents(appElement, askDataServ) {
     let isLoginMode = true;
 

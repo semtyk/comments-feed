@@ -4,7 +4,7 @@
 
 import { initAnswerComment, initUpdateLikesListeners, sendComment } from "./push.js";        //импорт функций для ответа на коммент и лайка
 import { askDataServ } from "./api.js";
-import { renderLoginComponents, token, currentUser } from "./loginComponents.js";
+import { renderLoginComponents, token, currentUser, getDataFromLocalStorage } from "./loginComponents.js";
 import { letDisabledButton, letClearForm } from "./changeElement.js";
 
 //Функция для форматирования даты под коммент
@@ -102,6 +102,7 @@ const renderApp = (array) => {
             rows="4"></textarea>
           <div class="add-form-row">
             <button class="add-form-button add-form-button_disable" id="buttonForWriteComment" disabled>Написать</button>
+            <button class="add-form-button" id="buttonForExit">Выйти</button>
           </div>
         </div>`;
 
@@ -137,6 +138,11 @@ const renderApp = (array) => {
     }
   })
 
+  document.getElementById('buttonForExit').addEventListener('click', () => {
+    localStorage.clear();       //очищаем локал сторадж
+    getDataFromLocalStorage();  //переназначаем токен и юзера (нулевые)
+    renderApp(array);           //рендерим страницу с предложением авторизоваться
+  })
   
   initUpdateLikesListeners(array);
   initAnswerComment();
