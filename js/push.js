@@ -1,10 +1,10 @@
 'use strict'
 //этот файл содержит подпрограммы, активируемые при нажатии каких либо элементов на странице
 
-import { renderComments } from "./render.js";       //импорт рендер функции
-import { userCommentInput, userNameInput, formForComment, messageCommentAdd } from "./variables.js";        //импорт переменных
-import { sendDataServ } from "./api.js";            //импорт функции отправки данных на сервер
+import { renderApp} from "./render.js";       //импорт рендер функции
+import { askDataServ, sendDataServ } from "./api.js";            //импорт функции отправки данных на сервер
 import { letClearForm } from "./changeElement.js";
+import { loginUser, regUser } from "./api.js";
 
 //Функция задержки для использования вместо промисов
 function delay(interval) {
@@ -33,7 +33,7 @@ const initUpdateLikesListeners = (array) => {
                 }
                 array[index].isActiveLike = !array[index].isActiveLike;
                 likeButtonsElement.classList.remove('-loading-like');
-                renderComments(array);      //после того как нажали на лайк, рендерим страницу (число лайков изменилось)
+                renderApp(array);      //после того как нажали на лайк, рендерим страницу (число лайков изменилось)
             })
 
         });
@@ -43,6 +43,7 @@ const initUpdateLikesListeners = (array) => {
 //Функция для функционала ответ на комментарий
 
 const initAnswerComment = () => {
+    const userCommentInput = document.getElementById('inputForComment');    //поле ввода коммента
     const oldComments = document.querySelectorAll('.comment')
     for (const oldComment of oldComments) {                         //при нажатии на коммент, пихаем его внутреннее содержимое в поле ввода комментария
         oldComment.addEventListener('click', () => {
@@ -63,6 +64,11 @@ const initAnswerComment = () => {
 //Функция вызываемая по нажатии кнопки отправки коммента
 
 const sendComment = () => {
+    const userNameInput = document.getElementById('inputForName');          //поле ввода имени
+    const userCommentInput = document.getElementById('inputForComment');    //поле ввода коммента
+    const messageCommentAdd = document.querySelector('.text-while-add-comment');  //сообщение что коммент отправляется
+    const formForComment = document.querySelector('.add-form');                   //форма ввода комментария
+
     letClearForm(userNameInput);
     letClearForm(userCommentInput);
 
@@ -87,5 +93,68 @@ const sendComment = () => {
     sendDataServ();
 };
 
-export {initUpdateLikesListeners, initAnswerComment, sendComment}
+
+
+//Функции, вызываемые при нажатии на кнопку входа/регистрации 
+//---функция авторизации:
+export const authorizationUser = (setToken, setUser) => {
+    const login = document.getElementById('inputForRegLogin').value;
+    const password = document.getElementById('inputForRegPassword').value;
+    if (!login) {
+        alert('Введите логин');
+        return;
+    }
+    if (!password) {
+        alert('Введите пароль');
+        return;
+    }
+    document.getElementById('buttonForReg').innerHTML = 'Подождите...';
+    document.getElementById('buttonForReg').disabled = true;
+    loginUser(login, password)      
+        .then((user) => {
+            setToken(`Bearer ${user.user.token}`); 
+            setUser(user.user.name);
+            localStorage.setItem('token', `Bearer ${user.user.token}`);     //сохраняем в локал сторадж токен и логин
+            localStorage.setItem('user', user.user.name);
+            askDataServ(); 
+        })
+        .catch((error) => {
+            alert(error.message);
+        })
+}
+
+//---функция регистрации:
+export const registrationUser = (setToken, setUser) => {
+    const login = document.getElementById('inputForRegLogin').value;
+    const name = document.getElementById('inputForRegName').value;
+    const password = document.getElementById('inputForRegPassword').value;
+    if (!name) {
+        alert('Введите имя');
+        return;
+    }
+    if (!login) {
+        alert('Введите логин');
+        return;
+    }
+    if (!password) {
+        alert('Введите пароль');
+        return;
+    }
+    document.getElementById('buttonForReg').innerHTML = 'Подождите...';
+    document.getElementById('buttonForReg').disabled = true;
+    regUser(login, password, name)
+        .then((user) => {
+            setToken(`Bearer ${user.user.token}`); 
+            setUser(user.user.name);
+            localStorage.setItem('token', `Bearer ${user.user.token}`); //сохраняем в локал сторадж токен и логин
+            localStorage.setItem('user', user.user.name);
+            askDataServ(); 
+        })
+        .catch((error) => {
+            alert(error.message);
+        })
+}
+
+
+export { initUpdateLikesListeners, initAnswerComment, sendComment}
 

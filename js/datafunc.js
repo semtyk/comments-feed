@@ -1,7 +1,8 @@
 'use strict'
 //этот файл содержит подпрограмму преобразования данных с json в массив 
 
-import { renderComments } from "./render.js";       //импорт рендре функции
+import { renderApp, renderComments } from "./render.js";       //импорт рендре функции
+import { token } from "./loginComponents.js";
 
 //Функция преобразования данных с сервера в массив комментариев
 
@@ -18,7 +19,10 @@ const convertServToArr = (response, array) => {
                 id: item.id,
             }
         });
-        renderComments(array);      //после того как преобразовали данные, рендерим их на страницу в виде комментария
+        if (!token) {
+            renderComments(array);      //Если мы без авторизации, то уже в существующую разметку добавляем ленту комментариев
+        } else renderApp(array);
+        
     })
 }
 

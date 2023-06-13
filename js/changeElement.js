@@ -1,10 +1,10 @@
 'use strict'
 //этот файл содержит подпрограммы для изменения внешнего вида элементов
-import { commentButton } from "./variables.js";
 
 //Расширенная валидация
 
 function letDisabledButton(expectedValue) {
+    const commentButton = document.getElementById('buttonForWriteComment');   //кнопка для отправки коммента
     if (expectedValue === '') {
         commentButton.disabled = true;
         commentButton.classList.add('add-form-button_disable')

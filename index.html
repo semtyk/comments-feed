@@ -8,10 +8,11 @@
 </head>
 
 <body>
-  <div class="container">
-    <ul class="comments" id="blockOfComments">
+  <div class="container" id="app">
+    
+    <!-- <ul class="comments" id="blockOfComments"> -->
       <!-- Список рендерится в JS -->
-    </ul>
+    <!-- </ul>
     <div class="text-while-add-comment dpnone">
       Пожалуйста подождите, комментарий добавляется...
     </div>
@@ -20,15 +21,28 @@
       <textarea id="inputForComment" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
       <div class="add-form-row">
-        <!-- <button class="add-form-button" id="buttonForDeleteComment">Удалить</button> -->
-        <!-- <button class="add-form-button" id="buttonForDeleteComment">Удалить</button> -->
         <button class="add-form-button add-form-button_disable" id="buttonForWriteComment" disabled>Написать</button>
       </div>
     </div>
+
+    <div class="add-form">
+      <h3 class="">Форма входа</h3>
+      <input id="inputForRegName" type="text" class="add-form-regname" placeholder="Введите имя"/>
+      <br>
+      <input id="inputForRegLogin" type="text" class="add-form-regname" placeholder="Введите логин" />
+      <br>
+      <input id="inputForRegPassword" type="password" class="add-form-regname" placeholder="Введите пароль" />
+      
+        <button class="add-form-button add-form-button_disable" id="buttonForWriteComment" disabled>Зарегистрироваться</button>
+        <br>
+        <a href="#" class="text_Reglink">Войти</a>
+        
+    </div> -->
+
   </div>
 </body>
 
-<script type="module" src="./js/main.js">
+<script type="module" src="./js/main.js" defer>
 </script>
 
 </html>
