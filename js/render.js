@@ -6,26 +6,27 @@ import { initAnswerComment, initUpdateLikesListeners, sendComment } from "./push
 import { askDataServ } from "./api.js";
 import { renderLoginComponents, token, currentUser, getDataFromLocalStorage } from "./loginComponents.js";
 import { letDisabledButton, letClearForm } from "./changeElement.js";
+import { format } from 'date-fns';
 
 //Функция для форматирования даты под коммент
 
-const formatDate = (dateObject) => {
-  let minutes = dateObject.getMinutes();
-  let months = dateObject.getMonth() + 1;
-  let years = dateObject.getFullYear() - 2000;
-  let days = dateObject.getDate();
-  if (days < 10) {
-    days = "0" + days;
-  }
-  if (minutes < 10) {
-    minutes = "0" + minutes;
-  }
-  if (months < 10) {
-    months = "0" + months;
-  }
-  const outDate = days + '.' + months + '.' + years + '  ' + dateObject.getHours() + ':' + minutes;
-  return outDate;
-}
+// const formatDate = (dateObject) => {
+//   let minutes = dateObject.getMinutes();
+//   let months = dateObject.getMonth() + 1;
+//   let years = dateObject.getFullYear() - 2000;
+//   let days = dateObject.getDate();
+//   if (days < 10) {
+//     days = "0" + days;
+//   }
+//   if (minutes < 10) {
+//     minutes = "0" + minutes;
+//   }
+//   if (months < 10) {
+//     months = "0" + months;
+//   }
+//   const outDate = days + '.' + months + '.' + years + '  ' + dateObject.getHours() + ':' + minutes;
+//   return outDate;
+// }
 
 
 //рендер-функция преобразования из массива в html содержимое комментария
@@ -40,7 +41,7 @@ export const renderComments = (array) => {
     return `<li class="comment">
         <div class="comment-header">
           <div>${item.name}</div>
-          <div>${formatDate(item.date)}</div>
+          <div>${format(item.date, 'yyyy-MM-dd hh.mm.ss')}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">${item.text}</div>
@@ -53,7 +54,7 @@ export const renderComments = (array) => {
         </div>
       </li>`
   }).join('');
-
+  
   elComments.innerHTML = commentsHTML;
 }
 
@@ -74,7 +75,7 @@ const renderApp = (array) => {
     return `<li class="comment">
         <div class="comment-header">
           <div>${item.name}</div>
-          <div>${formatDate(item.date)}</div>
+          <div>${format(item.date, 'yyyy-MM-dd hh.mm.ss')}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">${item.text}</div>
@@ -87,7 +88,7 @@ const renderApp = (array) => {
         </div>
       </li>`
   }).join('');
-
+  
 
   const appHtml = `
             <ul class="comments" id = "blockOfComments">
